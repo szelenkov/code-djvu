@@ -108,32 +108,49 @@ export class DjVuViewerProvider implements vscode.CustomReadonlyEditorProvider {
                 <div id="toolbar">
                     <button class="toolbar-button" id="prev">Previous</button>
                     <button class="toolbar-button" id="next">Next</button>
+                    <button class="toolbar-button" id="zoomIn">Zoom In</button>
+                    <button class="toolbar-button" id="zoomOut">Zoom Out</button>
+                    <button class="toolbar-button" id="rotate">Rotate</button>
+                    <input type="text" id="searchInput" placeholder="Search..." />
+                    <button class="toolbar-button" id="searchBtn">Search</button>
                     <span id="page-info"></span>
                 </div>
+                <div id="loading" style="display: none;">Loading...</div>
                 <div id="viewer"></div>
                 <script src="${djvuJsUri}"></script>
                 <script>
                     const vscode = acquireVsCodeApi();
                     let djvuDocument;
                     let currentPage = 0;
+                    let currentZoom = 1.0;
+                    let currentRotation = 0;
+                    let searchResults = [];
+                    let currentSearchIndex = -1;
 
                     async function loadDocument() {
                         try {
+                            document.getElementById('loading').style.display = 'block';
                             const response = await fetch('${documentPath}');
                             const arrayBuffer = await response.arrayBuffer();
                             djvuDocument = new DjVu.Document(arrayBuffer);
                             
                             const pageCount = djvuDocument.pages.length;
-                            document.getElementById('page-info').textContent = 
-                                \`Page \${currentPage + 1} of \${pageCount}\`;
+                            updatePageInfo();
                             
-                            renderCurrentPage();
+                            await renderCurrentPage();
+                            document.getElementById('loading').style.display = 'none';
                         } catch (error) {
+                            document.getElementById('loading').style.display = 'none';
                             vscode.postMessage({
                                 command: 'error',
                                 text: 'Error loading DjVu file: ' + error.message
                             });
                         }
+                    }
+
+                    function updatePageInfo() {
+                        document.getElementById('page-info').textContent = 
+                            \`Page \${currentPage + 1} of \${djvuDocument.pages.length} | Zoom: \${Math.round(currentZoom * 100)}% | Rotation: \${currentRotation}°\`;
                     }
 
                     async function renderCurrentPage() {
@@ -145,20 +162,75 @@ export class DjVuViewerProvider implements vscode.CustomReadonlyEditorProvider {
                         try {
                             const page = await djvuDocument.pages[currentPage].getImage();
                             const canvas = document.createElement('canvas');
-                            canvas.width = page.width;
-                            canvas.height = page.height;
+                            
+                            // Apply zoom
+                            canvas.width = page.width * currentZoom;
+                            canvas.height = page.height * currentZoom;
                             
                             const ctx = canvas.getContext('2d');
-                            ctx.putImageData(page, 0, 0);
+                            
+                            // Apply rotation
+                            if (currentRotation !== 0) {
+                                ctx.save();
+                                ctx.translate(canvas.width/2, canvas.height/2);
+                                ctx.rotate(currentRotation * Math.PI / 180);
+                                ctx.translate(-canvas.width/2, -canvas.height/2);
+                            }
+                            
+                            // Draw scaled image
+                            const tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = page.width;
+                            tempCanvas.height = page.height;
+                            tempCanvas.getContext('2d').putImageData(page, 0, 0);
+                            
+                            ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
+                            
+                            if (currentRotation !== 0) {
+                                ctx.restore();
+                            }
                             
                             viewer.appendChild(canvas);
-                            
-                            document.getElementById('page-info').textContent = 
-                                \`Page \${currentPage + 1} of \${djvuDocument.pages.length}\`;
+                            updatePageInfo();
                         } catch (error) {
                             vscode.postMessage({
                                 command: 'error',
                                 text: 'Error rendering page: ' + error.message
+                            });
+                        }
+                    }
+
+                    async function searchInDocument(query) {
+                        searchResults = [];
+                        currentSearchIndex = -1;
+                        
+                        if (!query) return;
+                        
+                        try {
+                            for (let i = 0; i < djvuDocument.pages.length; i++) {
+                                const text = await djvuDocument.pages[i].getText();
+                                if (text.toLowerCase().includes(query.toLowerCase())) {
+                                    searchResults.push(i);
+                                }
+                            }
+                            
+                            if (searchResults.length > 0) {
+                                currentSearchIndex = 0;
+                                currentPage = searchResults[0];
+                                await renderCurrentPage();
+                                vscode.postMessage({
+                                    command: 'info',
+                                    text: \`Found \${searchResults.length} matches\`
+                                });
+                            } else {
+                                vscode.postMessage({
+                                    command: 'info',
+                                    text: 'No matches found'
+                                });
+                            }
+                        } catch (error) {
+                            vscode.postMessage({
+                                command: 'error',
+                                text: 'Error searching document: ' + error.message
                             });
                         }
                     }
@@ -174,6 +246,33 @@ export class DjVuViewerProvider implements vscode.CustomReadonlyEditorProvider {
                         if (djvuDocument && currentPage < djvuDocument.pages.length - 1) {
                             currentPage++;
                             renderCurrentPage();
+                        }
+                    });
+
+                    document.getElementById('zoomIn').addEventListener('click', () => {
+                        currentZoom *= 1.2;
+                        renderCurrentPage();
+                    });
+
+                    document.getElementById('zoomOut').addEventListener('click', () => {
+                        currentZoom /= 1.2;
+                        renderCurrentPage();
+                    });
+
+                    document.getElementById('rotate').addEventListener('click', () => {
+                        currentRotation = (currentRotation + 90) % 360;
+                        renderCurrentPage();
+                    });
+
+                    document.getElementById('searchBtn').addEventListener('click', () => {
+                        const query = document.getElementById('searchInput').value;
+                        searchInDocument(query);
+                    });
+
+                    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            const query = document.getElementById('searchInput').value;
+                            searchInDocument(query);
                         }
                     });
 

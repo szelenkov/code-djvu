@@ -28,12 +28,24 @@
     ],
     "commands": [
       {
-        "command": "code-djvu.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "djvuViewer.openViewer",
         "title": "Open in DjVu Viewer"
+      },
+      {
+        "command": "djvuViewer.zoomIn",
+        "title": "DjVu: Zoom In"
+      },
+      {
+        "command": "djvuViewer.zoomOut",
+        "title": "DjVu: Zoom Out"
+      },
+      {
+        "command": "djvuViewer.rotateClockwise",
+        "title": "DjVu: Rotate Clockwise"
+      },
+      {
+        "command": "djvuViewer.search",
+        "title": "DjVu: Search in Document"
       }
     ]
   },
