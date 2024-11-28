@@ -9,13 +9,31 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCustomEditor:djvuViewer"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
+    "customEditors": [
+      {
+        "viewType": "djvuViewer",
+        "displayName": "DjVu Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.djvu"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
     "commands": [
       {
         "command": "code-djvu.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "djvuViewer.openViewer",
+        "title": "Open in DjVu Viewer"
       }
     ]
   },
