@@ -2,7 +2,7 @@
   "name": "code-djvu",
   "displayName": "code-djvu",
   "description": "code djvu viewer",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.109.0"
   },
@@ -51,6 +51,6 @@
   },
   "overrides": {
     "diff": "^8.0.2",
-    "serialize-javascript": "^7.0.2"
+    "serialize-javascript": "^7.0.3"
   }
 }
