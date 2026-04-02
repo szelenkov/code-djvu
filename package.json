@@ -52,6 +52,7 @@
   "overrides": {
     "diff": "^8.0.2",
     "minimatch": "^10.2.4",
-    "serialize-javascript": "^7.0.3"
+    "picomatch": "~> 4.0.4",
+    "serialize-javascript": "~> 7.0.5"
   }
 }
