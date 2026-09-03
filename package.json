@@ -2,9 +2,9 @@
   "name": "code-djvu",
   "displayName": "code-djvu",
   "description": "code djvu viewer",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "engines": {
-    "vscode": "^1.133.0"
+    "vscode": "^1.135.0"
   },
   "categories": [
     "Other"
@@ -36,13 +36,13 @@
     "@types/node": "^26.4.0",
     "@types/vscode": "^1.109.0",
     "@typescript-eslint/eslint-plugin": "^8.69.0",
-    "@typescript-eslint/parser": "^8.68.0",
+    "@typescript-eslint/parser": "^8.69.0",
     "@vscode/test-electron": "^3.1.0",
     "eslint": "^10.9.1",
     "glob": "^13.0.6",
-    "mocha": "^11.7.5",
+    "mocha": "^12.0.0",
     "ts-loader": "^9.5.4",
-    "webpack": "^5.109.2",
+    "webpack": "^5.110.3",
     "webpack-cli": "^7.2.3"
   },
   "dependencies": {

@@ -1,25 +1,51 @@
 # code-djvu
 
-Display djvu in VSCode.
+A Visual Studio Code extension for viewing DJVU documents.
 
-## Contribute
+> **Status:** The project is currently a work in progress. The extension scaffold is
+> in place, but the DJVU viewer is not yet implemented. The only available command
+> at present is **Hello World**.
 
-### Upgrade djvu.js
+## Requirements
 
-1. Download latest [Pre-built (older browsers)](https://djvu.js.org/assets/dist/djvu.js).
-2. Extract the ZIP file.
-3. Overwrite ./lib/* by extracted directories.
-   - If lib/web/viewer.html has changes, apply these changes to HTML template at djvuPreview.ts.
-4. To not use sample djvu.
-   - Remove sample djvu.
-   - Remove code about using sample djvu from lib/web/viewer.js.
+- Visual Studio Code 1.135.0 or newer
+- Node.js and npm for building from source
 
-    ```js
-    defaultUrl: {
-      value: "",
-      kind: OptionKind.VIEWER
-    },
-    ```
+## Development
+
+1. Clone the repository and install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Compile the extension:
+
+   ```bash
+   npm run compile
+   ```
+
+3. Open the project in VS Code and press `F5` to launch an Extension Development
+   Host window.
+
+Useful commands:
+
+| Command | Description |
+| --- | --- |
+| `npm run compile` | Build `dist/extension.js` |
+| `npm run watch` | Rebuild automatically when source files change |
+| `npm run lint` | Lint the TypeScript source |
+| `npm run pretest && npm run test` | Compile, lint, and run the test suite |
+| `npm run package` | Create a production bundle |
+
+The extension entry point is `src/extension.ts`. Generated build output is written
+to `dist/` and `out/` and is not committed.
+
+## Contributing
+
+Bug reports and pull requests are welcome. Keep changes focused, use the existing
+TypeScript and ESLint conventions, and update the changelog when user-visible
+behavior changes.
 
 ## Change log
 
@@ -27,6 +53,6 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-Please see [LICENSE](./LICENSE)
+See [LICENSE](./LICENSE).
 
-**Enjoy!**
+**Enjoy!*
