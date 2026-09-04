@@ -37,18 +37,24 @@ Creates a production bundle with minification and hidden source maps for extensi
 ## Architecture
 
 **Key concepts:**
-- **Extension activation**: Triggered by commands defined in `package.json` under `contributes.commands`. Currently only "Hello World" is implemented.
-- **Lifecycle**: The `activate()` function runs once when the command executes; `deactivate()` runs on extension shutdown.
+- **Extension activation**: Registers the DJVU custom editor provider and the Hello World command contributed by `package.json`.
+- **Lifecycle**: The `activate()` function registers disposables; `deactivate()` runs on extension shutdown.
+- **Custom editor**: `DjvuCustomEditorProvider` opens `.djvu` files in a read-only webview and transfers document bytes to the viewer.
 - **Bundling**: Webpack entry point is `src/extension.ts`, output goes to `dist/extension.js`. VSCode excludes `vscode` module from bundling (listed in `externals`).
 
 **Project structure:**
 - `src/extension.ts` — Main extension entry point with activate/deactivate hooks
+- `src/djvuCustomEditor.ts` — Read-only custom editor provider and webview UI
+- `media/djvu.js` — Vendored DjVu.js browser bundle
 - `src/test/` — Mocha test suite (currently minimal boilerplate)
 - `dist/` — Bundled output (generated, not committed)
 - `out/` — Compiled tests (generated, not committed)
 
 **DJVU.js integration:**
-The extension integrates with [djvu.js](https://djvu.js.org/) library (not yet fully implemented). The `lib/` directory contains pre-built djvu.js distributions. When upgrading djvu.js (see README Contribute section), you must manually apply any changes from `lib/web/viewer.html` to the HTML template in `djvuPreview.ts`.
+The extension uses the official [DjVu.js](https://djvu.js.org/) browser bundle in
+`media/djvu.js`. The custom editor creates a `DjVu.Worker`, loads the document
+bytes, and renders page PNGs inside the webview. The bundle is distributed under
+GNU GPL v2; its license is included in `media/DJVUJS-GPL-2.0.txt`.
 
 ## Key Conventions
 
@@ -75,6 +81,6 @@ The extension integrates with [djvu.js](https://djvu.js.org/) library (not yet f
 
 ## Important Notes
 
-- The extension currently ships with minimal functionality—only a "Hello World" command. Real DJVU viewing features are not yet implemented.
+- The viewer is read-only and currently renders one page at a time.
 - The build process generates `*.vsix` files (VS Code extension packages) suitable for publishing to the extension marketplace.
 - Generated directories (`dist/`, `out/`, `.vscode-test/`) are excluded from git. Always run `npm run compile` after cloning to regenerate them.

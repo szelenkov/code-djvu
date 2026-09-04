@@ -17,6 +17,18 @@
         "command": "code-djvu.helloWorld",
         "title": "Hello World"
       }
+    ],
+    "customEditors": [
+      {
+        "viewType": "code-djvu.viewer",
+        "displayName": "DJVU Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.djvu"
+          }
+        ],
+        "priority": "default"
+      }
     ]
   },
   "scripts": {

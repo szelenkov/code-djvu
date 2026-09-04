@@ -2,9 +2,12 @@
 
 A Visual Studio Code extension for viewing DJVU documents.
 
-> **Status:** The project is currently a work in progress. The extension scaffold is
-> in place, but the DJVU viewer is not yet implemented. The only available command
-> at present is **Hello World**.
+The extension provides a read-only custom editor for `.djvu` files. It uses the
+vendored DjVu.js browser bundle to decode and render pages locally in a VS Code
+webview.
+
+Current viewer controls include page navigation, page-number selection, zoom, and
+basic page text detection. Editing and saving DJVU documents are not supported.
 
 ## Requirements
 
@@ -27,6 +30,8 @@ A Visual Studio Code extension for viewing DJVU documents.
 
 3. Open the project in VS Code and press `F5` to launch an Extension Development
    Host window.
+
+Open a `.djvu` file in the Extension Development Host to launch the **DJVU Viewer**.
 
 Useful commands:
 
