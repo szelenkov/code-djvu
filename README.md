@@ -22,6 +22,9 @@ basic page text detection. Editing and saving DJVU documents are not supported.
    npm install
    ```
 
+   Run this step before using the build, lint, or test commands. It installs the
+   local tools, including Webpack.
+
 2. Compile the extension:
 
    ```bash
